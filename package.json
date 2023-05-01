@@ -2,13 +2,15 @@
   "name": "assistance",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/server.ts",
   "keywords": [],
   "author": "Toheeb Rauf",
   "license": "ISC",
   "scripts": {
-    "test": "jest",
-    "lint": "tslint -p tsconfig.json -c tslint.json"
+    "build": "./node_modules/.bin/tsc",
+    "dev": "nodemon ./src/server.ts",
+    "lint": "tslint -p tsconfig.json -c tslint.json",
+    "test": "jest"
   },
   "husky": {
     "hooks": {
@@ -23,8 +25,11 @@
     "class-validator": "^0.14.0",
     "cloudinary": "^1.36.2",
     "cookie-parser": "^1.4.6",
+    "dotenv": "^16.0.3",
     "express": "^4.18.2",
-    "http-status-codes": "^2.2.0"
+    "http-status-codes": "^2.2.0",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^4.6.2"
   },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.3",
@@ -33,6 +38,8 @@
     "@types/jsonwebtoken": "^9.0.2",
     "@types/node": "^18.16.3",
     "@types/supertest": "^2.0.12",
+    "@types/swagger-jsdoc": "^6.0.1",
+    "@types/swagger-ui-express": "^4.1.3",
     "jest": "^29.5.0",
     "nodemon": "^2.0.22",
     "supertest": "^6.3.3",
