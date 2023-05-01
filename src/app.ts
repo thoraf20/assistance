@@ -2,9 +2,11 @@ import * as express from 'express';
 import * as bodyParser from 'body-parser';
 import * as cookieParser from 'cookie-parser';
 import * as dotenv from'dotenv';
+import * as cors from 'cors';
 import swaggerJsdoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 import Controller from './interfaces/controller.interface';
+import { myDataSource } from './config/db.config';
 
 dotenv.config()
 
@@ -28,6 +30,7 @@ class App {
   private initializeMiddlewares() {
     this.app.use(bodyParser.json());
     this.app.use(cookieParser());
+    this.app.use(cors());
     // this.app.use(loggerMiddleware);
     // const options = {
     //   definition: {
@@ -70,6 +73,16 @@ class App {
     controllers.forEach((controller) => {
       this.app.use('/v1', controller.router);
     });
+  }
+
+  private connectToTheDatabase() {
+
+    myDataSource
+    .initialize()
+    .then(() => {})
+    .catch((err) => {
+      console.error('Database connection error: ', err)
+    })
   }
 
   public listen() {
