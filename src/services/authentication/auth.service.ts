@@ -145,6 +145,79 @@ class AuthenticationService {
       throw new WrongCredentialsException();
     }
   }
+  public async forgotPassword(email: string) {
+    const user = await this.user.findOne({
+      where: { email: email.toLowerCase() }
+    })
+
+    if (user) {
+      const code = Math.floor(Math.random() * 9000 + 1000);
+
+      const newOtp = new OTP()
+      newOtp.user_id = user.id
+      newOtp.code = `${code}`
+
+      await newOtp.save()
+
+      await EmailService(
+        user.email, 
+        EmailSubject.FORGOT_PASSWORD, 
+        `It seems you forgot your password. Here is your verification code: ${code} to reset your password`
+      )
+
+      return {
+        success: true,
+        message: `Verification code hass been sent to your registered email(${user.email}) address`
+      }
+    } else {
+      throw new WrongCredentialsException()
+    }
+  }
+  public async resetPassword(email: string, code: string, password: string) {
+    const queryRunner = myDataSource.createQueryRunner()
+    await queryRunner.connect(); 
+
+    const user = await this.user.findOne({
+      where: { email: email.toLowerCase() }
+    })
+
+    if (user) {
+      const otp = await this.otp.findOne({
+        where: { user_id: user.id, code }
+      })
+
+      if (!otp) {
+        throw new InvalidOTPException()
+      }
+
+      if (moment(otp.created_at) > moment().add(5, 'minutes')) {
+        throw new OTPExpiredException()
+      }
+
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      await queryRunner.startTransaction();
+
+      await this.user.update(
+        { id: user.id },
+        { password: hashedPassword }
+      )
+
+      await this.otp.delete(
+        { id: user.id, code }
+      )
+
+      await queryRunner.commitTransaction();
+
+      return {
+        success: true,
+        message: 'password successfully updated'
+      }
+    } else {
+      await queryRunner.rollbackTransaction()
+      throw new WrongCredentialsException()
+    }
+  }
 
   public createToken(user: User): TokenData {
     const expiresIn = `${process.env.JWT_EXPIRESIN}`;

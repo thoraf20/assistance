@@ -13,10 +13,3 @@ export class CreateUserDto {
   public password: string;
 
 }
-
-
-export class ResetPasswordDto {
-  email: string;
-  code: string;
-  password: string;
-}
