@@ -3,8 +3,11 @@ import * as bodyParser from 'body-parser';
 import * as cookieParser from 'cookie-parser';
 import * as dotenv from'dotenv';
 import * as cors from 'cors';
+import helmet from 'helmet';
+import httpStatus from 'http-status-codes';
 import swaggerJsdoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
+import errorMiddleware from './middleware/error.middleware';
 import Controller from './interfaces/controller.interface';
 import { myDataSource } from './config/db.config';
 
@@ -16,11 +19,11 @@ class App {
   constructor(controllers: Controller[]) {
     this.app = express();
 
-    // this.connectToTheDatabase();
+    this.connectToTheDatabase();
     this.initializeMiddlewares();
     // this.initializeSwaggerDoc();
     this.initializeControllers(controllers);
-    // this.initializeErrorHandling();
+    this.initializeErrorHandling();
   }
 
   public getServer() {
@@ -67,6 +70,17 @@ class App {
     //   swaggerUi.serve,
     //   swaggerUi.setup(specs)
     // );
+    if (process.env.NODE_ENV === 'production') {
+      this.app.use(helmet())
+    }
+    // 404
+    // this.app.use((req, res) => {
+    //   res.status(httpStatus.NOT_FOUND).send()
+    // })
+  }
+
+  private initializeErrorHandling() {
+    this.app.use(errorMiddleware);
   }
 
   private initializeControllers(controllers: Controller[]) {
@@ -76,7 +90,6 @@ class App {
   }
 
   private connectToTheDatabase() {
-
     myDataSource
     .initialize()
     .then(() => {})
