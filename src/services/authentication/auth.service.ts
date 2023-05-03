@@ -67,7 +67,6 @@ class AuthenticationService {
       throw error
     }
   }
-
   public async verifyEmail(email: string, code: string) {
     const queryRunner = myDataSource.createQueryRunner()
     await queryRunner.connect(); 
@@ -218,7 +217,6 @@ class AuthenticationService {
       throw new WrongCredentialsException()
     }
   }
-
   public createToken(user: User): TokenData {
     const expiresIn = `${process.env.JWT_EXPIRESIN}`;
     const secret = `${process.env.JWT_SECRET}`;
