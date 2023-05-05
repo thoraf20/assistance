@@ -28,3 +28,8 @@ export class ResetPasswordDto {
   @IsString()
   password: string;
 }
+
+export class TwoFADto {
+  @IsString()
+  twoFACode: string;
+}

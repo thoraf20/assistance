@@ -1,6 +1,9 @@
+import { Response, response } from 'express';
 import * as bcrypt from 'bcrypt';
 import * as moment from 'moment';
 import * as jwt from 'jsonwebtoken';
+import * as speakeasy from 'speakeasy';
+import * as QRCode from 'qrcode';
 import { User, UserStatus } from "../../services/user/user.model";
 import { CreateUserDto } from '../../services/user/user.dto';
 import UserWithThatEmailAlreadyExistsException from '../../exceptions/UserWithThatEmailAlreadyExistsException';
@@ -132,11 +135,22 @@ class AuthenticationService {
         logInData.password, user.password
       );
       if (isPasswordMatching) {
+        user.password = undefined;
+        user.twoFACode = undefined
+
         const tokenData = this.createToken(user);
-        return {
-          success: true,
-          token: tokenData.token
-        };
+
+        if (user.is2FAEnable) {
+          return response.send({
+            is2FAEnable: true
+          })
+        } else {
+          return {
+            success: true,
+            token: tokenData.token
+          };
+        }
+        
       } else {
         throw new WrongCredentialsException();
       }
@@ -217,16 +231,37 @@ class AuthenticationService {
       throw new WrongCredentialsException()
     }
   }
-  public createToken(user: User): TokenData {
+  public createToken(user: User, isSecondFA = false): TokenData {
     const expiresIn = `${process.env.JWT_EXPIRESIN}`;
     const secret = `${process.env.JWT_SECRET}`;
     const dataStoredInToken: DataStoredInToken = {
+      isSecondFA,
       id: user.id,
       email: user.email,
     };
     return {
       token: jwt.sign(dataStoredInToken, secret, { expiresIn }),
     };
+  }
+  public async getTwofactorAuthenticationCode() {
+    const secretCode = speakeasy.generateSecret({
+      name: `${process.env.TWO_FACTOR_AUTH_APP_NAME}`
+    });
+
+    return {
+      otpauthUrl: secretCode.otpauth_url,
+      base32: secretCode.base32
+    }
+  }
+  public async respondWithQRCode(data: string, response: Response) {
+    QRCode.toFileStream(response, data)
+  }
+  public async verifyTwofactorAuthenticationCode(twoFACode: string, user: User) {
+    return speakeasy.totp.verify({
+      secret: user.twoFACode,
+      encoding: 'base32',
+      token: twoFACode
+    });
   }
 }
 

@@ -27,6 +27,12 @@ export class User extends BaseEntity {
   @Column({ nullable: false, select: false })
   password: string;
 
+  @Column({ nullable: true, select: false })
+  twoFACode: string;
+
+  @Column({ nullable: true, default: false })
+  is2FAEnable: boolean;
+
   @Column({ nullable: true, default: false })
   isEmailVerified: boolean;
 
