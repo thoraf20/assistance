@@ -31,7 +31,7 @@ export class Donor extends BaseEntity {
   @Column({ nullable: false })
   name: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: false })
   donated_amount: number;
 
   @CreateDateColumn()

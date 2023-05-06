@@ -23,10 +23,10 @@ export class Assistance extends BaseEntity {
   @PrimaryGeneratedColumn("uuid")
   id: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: false })
   category_id: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: false })
   user_id: string;
 
   @OneToOne(() => User)
@@ -48,7 +48,7 @@ export class Assistance extends BaseEntity {
   @Column({ nullable: false })
   imgUrl: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: false })
   target_amount: number;
 
   @Column({ nullable: true })
