@@ -2,6 +2,7 @@ import { DataSource } from "typeorm"
 import * as dotenv from 'dotenv'
 import { User } from "../services/user/user.model"
 import { OTP } from "../services/otp/otp.model"
+import { Category } from "../services/category/category.model"
 dotenv.config()
 
 export const myDataSource = new DataSource({
@@ -12,7 +13,7 @@ export const myDataSource = new DataSource({
   password: `${process.env.DB_PASSWORD}`,
   database: `${process.env.DB_NAME}`,
   entities: [
-   User, OTP
+   User, OTP, Category
   ],
   migrations: [/*...*/],
   // migrationsTableName: "custom_migration_table",
