@@ -1,4 +1,3 @@
-import { Response, response } from 'express';
 import { Category } from "./category.model";
 import { CreateCategoryDto } from './category.dto';
 import CategoryWithNameAlreadyExistsException from '../../exceptions/CategoryWithNameAlreadyExist';
