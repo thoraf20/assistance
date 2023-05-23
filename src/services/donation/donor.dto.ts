@@ -5,9 +5,6 @@ export class CreateDonorDto {
   public assistance_id: string;
 
   @IsString()
-  public name: string;
-
-  @IsNumber()
-  public donated_amount: number;
+  public reference: string;
 
 }

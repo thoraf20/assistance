@@ -10,7 +10,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
-import { Donor } from "./donor.model";
+import { Donor } from "../donation/donor.model";
 
 export enum AssistanceStatus {
   ACTIVE = 'active',
@@ -36,6 +36,12 @@ export class Assistance extends BaseEntity {
   @OneToMany(() => Donor, (donor) => donor.assistance)
   donor!: Donor[]
 
+  @Column({ nullable: true, type:"simple-array", default: []}) 
+  organizer: string[];
+
+  @Column({ nullable: true, default: 'NGN' })
+  currency: string;
+
   @Column({ nullable: true })
   beneficiary: string;
 
@@ -51,7 +57,7 @@ export class Assistance extends BaseEntity {
   @Column({ nullable: false })
   target_amount: number;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, default: 0 })
   donated_amount: number;
 
   @Column({ nullable: true, default: AssistanceStatus.ACTIVE })

@@ -1,4 +1,4 @@
-import { IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
+import { IsArray, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
 
 export class CreateAssistanceDto {
   @IsString()
@@ -6,6 +6,9 @@ export class CreateAssistanceDto {
 
   @IsString()
   public user_id: string;
+
+  @IsArray()
+  public organizer: [];
 
   @IsString()
   @IsOptional()

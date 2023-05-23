@@ -4,7 +4,7 @@ import { User } from "../services/user/user.model"
 import { OTP } from "../services/otp/otp.model"
 import { Category } from "../services/category/category.model"
 import { Assistance } from "../services/assistance/assistance.model"
-import { Donor } from "../services/assistance/donor.model"
+import { Donor } from "../services/donation/donor.model"
 dotenv.config()
 
 export const myDataSource = new DataSource({

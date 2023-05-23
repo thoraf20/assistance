@@ -8,7 +8,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
-import { Assistance } from "./assistance.model";
+import { Assistance } from "../assistance/assistance.model";
 
 export enum AssistanceStatus {
   ACTIVE = 'active',
