@@ -33,9 +33,16 @@ class DonorController implements Controller {
   }
 
   private getAllAssistanceDonations = async (request: Request, response: Response, next: NextFunction) => {
-    const assistanceId = request.query.assistance as any
+
+    const { assistanceId, page, per_page, topDonors } = request.query
     try {
-      const donors = await this.donorService.getAllAssistanceDonations(assistanceId);
+      const donors = await this.donorService.getAllAssistanceDonations(
+        assistanceId as any, 
+        {
+          page: page ? page as any : 1,
+          per_page: per_page ? per_page as any : 15,
+          topDonors: topDonors ? topDonors as any : false
+        });
       response.status(httpStatus.OK).send(donors);
     } catch (error) {
       next(error);

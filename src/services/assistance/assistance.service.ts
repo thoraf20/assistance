@@ -6,6 +6,7 @@ import { generateRandomAlphaNumeric } from "../../utils/type";
 import UserNotFoundException from "../../exceptions/UserNotFoundException";
 import AssistanceNotFoundException from "../../exceptions/AssistanceNotFoundException";
 import { Donor } from "../donation/donor.model";
+import AssistanceAlreadyExistsException from "exceptions/AssistanceAlreadyExistException";
 
 class AssistanceService {
   public assistance = Assistance;
@@ -20,6 +21,10 @@ class AssistanceService {
     const assistanceExist = await this.assistance.findOne({
       where: { user_id: assistanceData.user_id, title: assistanceData.title }
     })
+
+    if (assistanceExist) {
+      throw new AssistanceAlreadyExistsException(assistanceData.title)
+    }
 
     const response = await cloudinary.v2.uploader.upload(assistanceData.imgUrl, { public_id: generateRandomAlphaNumeric(8), resource_type: 'raw' })
 
@@ -38,17 +43,14 @@ class AssistanceService {
       throw new UserNotFoundException(assistanceData.user_id);
     }
   }
+  
   public async getAll() {
-    const allAssistances = await this.assistance.find({})
+    const allAssistances = await this.assistance.find()
 
-    if (allAssistances.length >= 1) {
-      return {
-        success: true,
-        message: 'assistances fetched successfully',
-        data: allAssistances
-      }
-    } else {
-      throw new AssistanceNotFoundException()
+    return {
+      success: true,
+      message: 'assistances fetched successfully',
+      data: allAssistances
     }
   }
   public async getAllUserAssistance(user_id: string) {
@@ -60,14 +62,10 @@ class AssistanceService {
       },
     })
 
-    if (allAssistances.length >= 1) {
-      return {
-        success: true,
-        message: 'assistances fetched successfully',
-        data: allAssistances
-      }
-    } else {
-      throw new AssistanceNotFoundException()
+    return {
+      success: true,
+      message: 'assistances fetched successfully',
+      data: allAssistances
     }
   }
   public async getOneById(id: string) {
@@ -92,23 +90,16 @@ class AssistanceService {
       }   
     }
   }
+
   public async getAllByCategory(category_id: string) {
     const allAssistances = await this.assistance.find({
       where: { category_id: category_id },
     })
 
-    if (allAssistances.length >= 1) {
-      return {
-        success: true,
-        message: 'assistances fetched successfully',
-        data: allAssistances
-      }
-    } else {
-      return {
-        success: true,
-        message: `no assistance for the category with id ${category_id}`,
-        data: []
-      }    
+    return {
+      success: true,
+      message: 'assistances fetched successfully',
+      data: allAssistances
     }
   }
 }
